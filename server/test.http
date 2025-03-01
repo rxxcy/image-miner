@@ -1,0 +1,72 @@
+### 服务器状态检查
+GET http://localhost:3000/
+Accept: application/json
+
+### 用户注册
+POST http://localhost:3000/api/users/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123",
+  "email": "test@example.com"
+}
+
+### 用户登录
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password123"
+}
+
+### 获取用户信息 (需要JWT令牌)
+GET http://localhost:3000/api/users/profile
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 测试认证 (需要JWT令牌)
+GET http://localhost:3000/api/users/test-auth
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 获取所有分类
+GET http://localhost:3000/api/categories
+Accept: application/json
+
+### 创建分类 (需要JWT令牌)
+POST http://localhost:3000/api/categories
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "name": "风景图片",
+  "description": "各种自然风景图片"
+}
+
+### 获取用户的分类 (需要JWT令牌)
+GET http://localhost:3000/api/categories/my
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 获取所有图片
+GET http://localhost:3000/api/pictures
+Accept: application/json
+
+### 按分类获取图片
+GET http://localhost:3000/api/pictures/category/1
+Accept: application/json
+
+### 保存图片 (需要JWT令牌)
+POST http://localhost:3000/api/pictures/save
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "url": "https://example.com/image.jpg",
+  "title": "美丽的风景",
+  "categoryId": 1,
+  "tags": ["风景", "自然"]
+}
+
+### 获取用户的图片 (需要JWT令牌)
+GET http://localhost:3000/api/pictures/my
+Authorization: Bearer YOUR_JWT_TOKEN_HERE 

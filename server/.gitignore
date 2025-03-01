@@ -1,0 +1,34 @@
+# 依赖目录
+node_modules/
+
+# 编译后的代码
+dist/
+
+# 环境变量
+.env
+.env.local
+.env.development
+.env.production
+
+# 日志
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE配置
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 操作系统文件
+.DS_Store
+Thumbs.db 

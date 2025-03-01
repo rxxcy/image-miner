@@ -5,6 +5,7 @@ import { cors } from 'hono/cors'
 import { initDb } from './db/index.js'
 import setupRoutes from './routes/index.js'
 import { error } from './utils/response.js'
+import { statsMiddleware } from './middlewares/stats.js'
 
 // 初始化数据库
 initDb()
@@ -15,6 +16,7 @@ const app = new Hono()
 // 中间件
 app.use('*', logger())
 app.use('*', cors())
+app.use('*', statsMiddleware)
 
 // 全局错误处理中间件
 app.onError((err, c) => {

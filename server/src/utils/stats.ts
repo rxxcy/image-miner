@@ -35,9 +35,9 @@ export const getFormattedUptime = () => {
   const days = Math.floor(uptime / (1000 * 60 * 60 * 24))
 
   let result = ''
-  if (days > 0) result += `${days}天 `
-  if (hours > 0 || days > 0) result += `${hours}小时 `
-  if (minutes > 0 || hours > 0 || days > 0) result += `${minutes}分钟 `
+  if (days > 0) result += `${days}天`
+  if (hours > 0 || days > 0) result += `${hours}小时`
+  if (minutes > 0 || hours > 0 || days > 0) result += `${minutes}分钟`
   result += `${seconds}秒`
 
   return result

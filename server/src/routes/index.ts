@@ -14,7 +14,6 @@ const setupRoutes = (app: Hono) => {
     return success(c, {
       version: '1.0.0',
       status: 'online',
-      server: '图片链接复制器API服务器运行正常',
       stats: {
         requestCount: stats.requestCount,
         uptime: stats.formattedUptime,

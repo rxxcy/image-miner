@@ -12,8 +12,9 @@ export const authMiddleware = async (c: Context, next: Next) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return c.json(
       {
-        success: false,
+        code: 401,
         message: '未授权访问',
+        data: null,
       },
       401
     )
@@ -39,8 +40,9 @@ export const authMiddleware = async (c: Context, next: Next) => {
     if (!user) {
       return c.json(
         {
-          success: false,
+          code: 401,
           message: '用户不存在',
+          data: null,
         },
         401
       )
@@ -55,8 +57,9 @@ export const authMiddleware = async (c: Context, next: Next) => {
     console.error('验证令牌错误:', error)
     return c.json(
       {
-        success: false,
+        code: 401,
         message: '无效的令牌',
+        data: null,
       },
       401
     )

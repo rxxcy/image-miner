@@ -2,24 +2,18 @@ import { Context } from 'hono'
 import { db } from '../db/index.js'
 import { categories } from '../db/schema/schema.js'
 import { eq } from 'drizzle-orm'
+import { success, error } from '../utils/response.js'
 
 // 获取所有分类
 export const getAllCategories = async (c: Context) => {
   try {
     const allCategories = await db.select().from(categories)
-    return c.json({
-      success: true,
+    return success(c, {
       categories: allCategories,
     })
-  } catch (error) {
-    console.error('获取分类错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('获取分类错误:', err)
+    return error(c)
   }
 }
 
@@ -41,19 +35,12 @@ export const createCategory = async (c: Context) => {
       .returning()
       .get()
 
-    return c.json({
-      success: true,
+    return success(c, {
       category: result,
     })
-  } catch (error) {
-    console.error('创建分类错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('创建分类错误:', err)
+    return error(c)
   }
 }
 
@@ -68,18 +55,11 @@ export const getUserCategories = async (c: Context) => {
       .from(categories)
       .where(eq(categories.userId, user.id))
 
-    return c.json({
-      success: true,
+    return success(c, {
       categories: userCategories,
     })
-  } catch (error) {
-    console.error('获取用户分类错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('获取用户分类错误:', err)
+    return error(c)
   }
 }

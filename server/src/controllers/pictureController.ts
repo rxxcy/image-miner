@@ -2,24 +2,18 @@ import { Context } from 'hono'
 import { db } from '../db/index.js'
 import { pictures } from '../db/schema/schema.js'
 import { eq } from 'drizzle-orm'
+import { success, error } from '../utils/response.js'
 
 // 获取所有图片
 export const getAllPictures = async (c: Context) => {
   try {
     const allPictures = await db.select().from(pictures)
-    return c.json({
-      success: true,
+    return success(c, {
       pictures: allPictures,
     })
-  } catch (error) {
-    console.error('获取图片错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('获取图片错误:', err)
+    return error(c)
   }
 }
 
@@ -43,19 +37,12 @@ export const savePicture = async (c: Context) => {
       .returning()
       .get()
 
-    return c.json({
-      success: true,
+    return success(c, {
       picture: result,
     })
-  } catch (error) {
-    console.error('保存图片错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('保存图片错误:', err)
+    return error(c)
   }
 }
 
@@ -69,19 +56,12 @@ export const getPicturesByCategory = async (c: Context) => {
       .from(pictures)
       .where(eq(pictures.categoryId, categoryId))
 
-    return c.json({
-      success: true,
+    return success(c, {
       pictures: categoryPictures,
     })
-  } catch (error) {
-    console.error('按分类获取图片错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('按分类获取图片错误:', err)
+    return error(c)
   }
 }
 
@@ -96,18 +76,11 @@ export const getMyPictures = async (c: Context) => {
       .from(pictures)
       .where(eq(pictures.userId, user.id))
 
-    return c.json({
-      success: true,
+    return success(c, {
       pictures: userPictures,
     })
-  } catch (error) {
-    console.error('获取用户图片错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('获取用户图片错误:', err)
+    return error(c)
   }
 }

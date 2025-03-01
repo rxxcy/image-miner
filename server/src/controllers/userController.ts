@@ -4,6 +4,7 @@ import { users } from '../db/schema/schema.js'
 import { eq } from 'drizzle-orm'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/jwt.js'
+import { success, error } from '../utils/response.js'
 
 // 登录控制器
 export const login = async (c: Context) => {
@@ -28,8 +29,7 @@ export const login = async (c: Context) => {
         JWT_SECRET
       )
 
-      return c.json({
-        success: true,
+      return success(c, {
         user: {
           id: user.id,
           username: user.username,
@@ -39,22 +39,10 @@ export const login = async (c: Context) => {
       })
     }
 
-    return c.json(
-      {
-        success: false,
-        message: '用户名或密码错误',
-      },
-      401
-    )
-  } catch (error) {
-    console.error('登录错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+    return error(c, '用户名或密码错误', 401)
+  } catch (err) {
+    console.error('登录错误:', err)
+    return error(c)
   }
 }
 
@@ -71,13 +59,7 @@ export const register = async (c: Context) => {
       .get()
 
     if (existingUser) {
-      return c.json(
-        {
-          success: false,
-          message: '用户名已存在',
-        },
-        400
-      )
+      return error(c, '用户名已存在', 400)
     }
 
     // 创建新用户
@@ -100,8 +82,7 @@ export const register = async (c: Context) => {
       JWT_SECRET
     )
 
-    return c.json({
-      success: true,
+    return success(c, {
       user: {
         id: result.id,
         username: result.username,
@@ -109,15 +90,9 @@ export const register = async (c: Context) => {
       },
       token,
     })
-  } catch (error) {
-    console.error('注册错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('注册错误:', err)
+    return error(c)
   }
 }
 
@@ -127,8 +102,7 @@ export const getProfile = async (c: Context) => {
     // 通过中间件获取当前用户
     const user = c.get('user')
 
-    return c.json({
-      success: true,
+    return success(c, {
       user: {
         id: user.id,
         username: user.username,
@@ -136,15 +110,9 @@ export const getProfile = async (c: Context) => {
         createdAt: user.createdAt,
       },
     })
-  } catch (error) {
-    console.error('获取用户信息错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('获取用户信息错误:', err)
+    return error(c)
   }
 }
 
@@ -154,22 +122,15 @@ export const testAuth = async (c: Context) => {
     // 通过中间件获取当前用户
     const user = c.get('user')
 
-    return c.json({
-      success: true,
+    return success(c, {
       message: '认证成功',
       user: {
         id: user.id,
         username: user.username,
       },
     })
-  } catch (error) {
-    console.error('测试认证错误:', error)
-    return c.json(
-      {
-        success: false,
-        message: '服务器错误',
-      },
-      500
-    )
+  } catch (err) {
+    console.error('测试认证错误:', err)
+    return error(c)
   }
 }

@@ -2,15 +2,16 @@ import { Hono } from 'hono'
 import userRoutes from './userRoutes.js'
 import categoryRoutes from './categoryRoutes.js'
 import pictureRoutes from './pictureRoutes.js'
+import { success } from '../utils/response.js'
 
 // 创建主路由
 const setupRoutes = (app: Hono) => {
   // 首页路由
   app.get('/', c => {
-    return c.json({
-      message: '图片链接复制器API服务器运行正常',
+    return success(c, {
       version: '1.0.0',
       status: 'online',
+      server: '图片链接复制器API服务器运行正常',
     })
   })
 

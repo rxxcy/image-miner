@@ -25,7 +25,10 @@ export const getAllCategories = async (c: Context) => {
 
 // 创建分类
 export const createCategory = async (c: Context) => {
-  const { name, description, userId } = await c.req.json()
+  const { name, description } = await c.req.json()
+
+  // 从中间件获取当前用户
+  const user = c.get('user')
 
   try {
     const result = await db
@@ -33,7 +36,7 @@ export const createCategory = async (c: Context) => {
       .values({
         name,
         description,
-        userId,
+        userId: user.id, // 使用当前登录用户的ID
       })
       .returning()
       .get()
@@ -56,13 +59,14 @@ export const createCategory = async (c: Context) => {
 
 // 获取用户创建的分类
 export const getUserCategories = async (c: Context) => {
-  const userId = parseInt(c.req.param('userId'))
+  // 从中间件获取当前用户
+  const user = c.get('user')
 
   try {
     const userCategories = await db
       .select()
       .from(categories)
-      .where(eq(categories.userId, userId))
+      .where(eq(categories.userId, user.id))
 
     return c.json({
       success: true,

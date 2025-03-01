@@ -25,7 +25,10 @@ export const getAllPictures = async (c: Context) => {
 
 // 保存图片
 export const savePicture = async (c: Context) => {
-  const { url, title, description, categoryId, userId } = await c.req.json()
+  const { url, title, description, categoryId } = await c.req.json()
+
+  // 从中间件获取当前用户
+  const user = c.get('user')
 
   try {
     const result = await db
@@ -35,7 +38,7 @@ export const savePicture = async (c: Context) => {
         title,
         description,
         categoryId,
-        userId,
+        userId: user.id, // 使用当前登录用户的ID
       })
       .returning()
       .get()
@@ -72,6 +75,33 @@ export const getPicturesByCategory = async (c: Context) => {
     })
   } catch (error) {
     console.error('按分类获取图片错误:', error)
+    return c.json(
+      {
+        success: false,
+        message: '服务器错误',
+      },
+      500
+    )
+  }
+}
+
+// 获取当前用户的图片
+export const getMyPictures = async (c: Context) => {
+  // 从中间件获取当前用户
+  const user = c.get('user')
+
+  try {
+    const userPictures = await db
+      .select()
+      .from(pictures)
+      .where(eq(pictures.userId, user.id))
+
+    return c.json({
+      success: true,
+      pictures: userPictures,
+    })
+  } catch (error) {
+    console.error('获取用户图片错误:', error)
     return c.json(
       {
         success: false,

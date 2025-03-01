@@ -2,6 +2,8 @@ import { Context } from 'hono'
 import { db } from '../db/index.js'
 import { users } from '../db/schema/schema.js'
 import { eq } from 'drizzle-orm'
+import jwt from 'jsonwebtoken'
+import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/jwt.js'
 
 // 登录控制器
 export const login = async (c: Context) => {
@@ -17,14 +19,23 @@ export const login = async (c: Context) => {
 
     // 这里应该比较密码哈希，为了简单，我们直接比较明文
     if (user && user.password === password) {
+      // 生成JWT令牌
+      const token = jwt.sign(
+        {
+          id: user.id,
+          username: user.username,
+        },
+        JWT_SECRET
+      )
+
       return c.json({
         success: true,
         user: {
           id: user.id,
           username: user.username,
           email: user.email,
-          token: 'demo-token-' + Date.now(),
         },
+        token,
       })
     }
 
@@ -80,6 +91,15 @@ export const register = async (c: Context) => {
       .returning()
       .get()
 
+    // 生成JWT令牌
+    const token = jwt.sign(
+      {
+        id: result.id,
+        username: result.username,
+      },
+      JWT_SECRET
+    )
+
     return c.json({
       success: true,
       user: {
@@ -87,6 +107,7 @@ export const register = async (c: Context) => {
         username: result.username,
         email: result.email,
       },
+      token,
     })
   } catch (error) {
     console.error('注册错误:', error)
@@ -102,32 +123,9 @@ export const register = async (c: Context) => {
 
 // 获取用户信息控制器
 export const getProfile = async (c: Context) => {
-  const authHeader = c.req.header('Authorization')
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return c.json(
-      {
-        success: false,
-        message: '未授权访问',
-      },
-      401
-    )
-  }
-
-  // 在真实应用中，应该验证token并获取用户ID
-  // 这里我们模拟使用ID为1的用户
   try {
-    const user = await db.select().from(users).where(eq(users.id, 1)).get()
-
-    if (!user) {
-      return c.json(
-        {
-          success: false,
-          message: '用户不存在',
-        },
-        404
-      )
-    }
+    // 通过中间件获取当前用户
+    const user = c.get('user')
 
     return c.json({
       success: true,
@@ -140,6 +138,32 @@ export const getProfile = async (c: Context) => {
     })
   } catch (error) {
     console.error('获取用户信息错误:', error)
+    return c.json(
+      {
+        success: false,
+        message: '服务器错误',
+      },
+      500
+    )
+  }
+}
+
+// 测试JWT验证
+export const testAuth = async (c: Context) => {
+  try {
+    // 通过中间件获取当前用户
+    const user = c.get('user')
+
+    return c.json({
+      success: true,
+      message: '认证成功',
+      user: {
+        id: user.id,
+        username: user.username,
+      },
+    })
+  } catch (error) {
+    console.error('测试认证错误:', error)
     return c.json(
       {
         success: false,

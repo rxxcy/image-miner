@@ -4,13 +4,15 @@
   "description": "Chrome扩展：右键点击图片并复制其链接",
   "scripts": {
     "build": "tsc && webpack --config webpack.config.js",
-    "watch": "webpack --watch --config webpack.config.js"
+    "watch": "webpack --watch --config webpack.config.js",
+    "serve": "http-server src -p 8080 --cors"
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@types/chrome": "^0.0.237",
     "copy-webpack-plugin": "^11.0.0",
+    "http-server": "^14.1.1",
     "ts-loader": "^9.4.3",
     "typescript": "^5.0.4",
     "webpack": "^5.84.1",
